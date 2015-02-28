@@ -1,0 +1,4 @@
+default_version = '1.0'
+module_pathname = '$libdir/fio'
+relocatable = true
+comment = 'PostgreSQL FS I/O Functions'
