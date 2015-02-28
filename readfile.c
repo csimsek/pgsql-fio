@@ -66,6 +66,5 @@ Datum fio_readfile(PG_FUNCTION_ARGS) {
     SET_VARSIZE(result, filesize);
     memcpy(VARDATA(result), content, filesize);
     pfree(content);
-    pfree(result);
     PG_RETURN_BYTEA_P(result);
 }
