@@ -24,9 +24,9 @@ int mkdir_recursive(const char *dir, mode_t mode) {
 }
 
 long getfilesize(FILE *fd) {
-	long result;
-	long oldpos = ftell(fd);
-	fseek(fd, 0, SEEK_END);
+    long result;
+    long oldpos = ftell(fd);
+    fseek(fd, 0, SEEK_END);
     result = ftell(fd);
     fseek(fd, oldpos, SEEK_SET);
     return result;
