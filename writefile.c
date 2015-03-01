@@ -57,6 +57,7 @@ Datum fio_writefile(PG_FUNCTION_ARGS) {
         if (PG_GETARG_BOOL(2)) { // if it is recursive
             char* filename2 = strdup(filename);
             mkdir_recursive(dirname(filename2), 0777);
+            //TODO: Why is this 0777?
         }
     }
 
