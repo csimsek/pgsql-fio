@@ -50,10 +50,8 @@ Datum fio_writefile(PG_FUNCTION_ARGS) {
         elog(ERROR, "cannot open file: %s", filename);
         return 0;
     }
-    buffer = (char*) palloc(contentsize);
-    memcpy(buffer, VARDATA(vcontent), contentsize);
+    buffer = text_to_cstring(vcontent);
     fwrite(buffer, 1, contentsize, fd);
     fclose(fd);
-    pfree(buffer);
     return contentsize;
 }
