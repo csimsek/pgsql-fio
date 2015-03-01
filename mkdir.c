@@ -44,6 +44,10 @@ Datum fio_mkdir(PG_FUNCTION_ARGS) {
     }
     v_pathname = PG_GETARG_TEXT_P(0);
     pathname = text_to_cstring(v_pathname);
+    if (strlen(pathname) == 0) {
+        elog(ERROR, "path must be specified");
+        return 0;
+    }
     if (PG_ARGISNULL(1)) {
         elog(ERROR, "mode must be specified");
         return 0;
