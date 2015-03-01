@@ -14,7 +14,7 @@ And then go to `psql` console and install the extension for your db
 
 `dbname# CREATE EXTENSION fio;`
 
-After creating extenison you can use functions with `fio_` prefix.
+After creating extension, you can use functions with `fio_` prefix.
 
 For example:
 
