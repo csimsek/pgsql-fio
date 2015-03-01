@@ -1,6 +1,6 @@
 
 MODULE_big = fio
-OBJS = fio.o writefile.o readfile.o readdir.o mkdir.o chmod.o
+OBJS = fio.o writefile.o readfile.o readdir.o mkdir.o chmod.o utils.o
 EXTENSION = fio
 DATA = fio--1.0.sql
 REGRESS = fio
