@@ -38,33 +38,26 @@ Datum fio_readfile(PG_FUNCTION_ARGS) {
     int totalcount = 0;
     char buffer[BUFFER_SIZE];
     FILE *fd;
-    size_t bytecount;
     bytea *result;
-    size_t filesize;
+    long filesize;
+    int bufferedbytecount;
     v_filename = PG_GETARG_TEXT_P(0);
     filename = text_to_cstring(v_filename);
     if ((fd = fopen(filename, "r+")) == NULL) {
         elog(ERROR, "cannot open file: %s", filename);
         return 0;
     }
-    fseek(fd, 0, SEEK_END);
-    filesize = ftell(fd);
-    fseek(fd, 0, SEEK_SET);
+    filesize = getfilesize(fd);
     content = (char *) palloc(filesize);
-    while (true) {
-        int readcount = fread(buffer, 1, BUFFER_SIZE, fd);
-        elog(NOTICE, "readcount: %d", readcount);
-        memcpy(content + totalcount, buffer, readcount);
-        totalcount += readcount;
-        if (readcount < BUFFER_SIZE) {
-            break;
-        }
-    }
+    do {
+        bufferedbytecount = fread(buffer, 1, BUFFER_SIZE, fd);
+        memcpy(content + totalcount, buffer, bufferedbytecount);
+        totalcount += bufferedbytecount;
+    } while (bufferedbytecount == BUFFER_SIZE);
     fclose(fd);
-    bytecount = VARHDRSZ + filesize;
-    result = (bytea *) palloc(bytecount);
-    SET_VARSIZE(result, filesize);
+    result = (bytea *) palloc(VARHDRSZ + filesize);
     memcpy(VARDATA(result), content, filesize);
     pfree(content);
+    SET_VARSIZE(result, filesize + VARHDRSZ);
     PG_RETURN_BYTEA_P(result);
 }
