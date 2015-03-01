@@ -7,9 +7,10 @@ int mkdir_recursive(const char *dir, mode_t mode) {
     size_t len;
     snprintf(tmp, sizeof(tmp),"%s",dir);
     len = strlen(tmp);
-	if ( len < 1 ) {
-		return 0;
-	}
+    if (len < 1) {
+        elog(ERROR, "directory name not provided");
+        return 0;
+    }
 	
     if(tmp[len - 1] == '/') {
         tmp[len - 1] = 0;
