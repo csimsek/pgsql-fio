@@ -8,6 +8,8 @@ After checkout the code run that command:
 
 `make install`
 
+*Please note: Do not forget edit `Makefile` for `PG_CONFIG` entry.*
+
 And then go to `psql` console and install the extension for your db
 
 `$ psql dbname`
