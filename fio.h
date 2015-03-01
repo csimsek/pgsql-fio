@@ -50,7 +50,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <utils/lsyscache.h>
 #include <utils/syscache.h>
 #include <utils/typcache.h>
-int mkdir_recursive(const char *dir, mode_t mode);
+
+#include "utils.h"
+
 Datum fio_writefile(PG_FUNCTION_ARGS);
 Datum fio_readfile(PG_FUNCTION_ARGS);
 Datum fio_readdir(PG_FUNCTION_ARGS);
