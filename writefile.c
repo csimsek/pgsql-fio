@@ -32,17 +32,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Datum fio_writefile(PG_FUNCTION_ARGS) {
     text *vfilename;
     bytea *vcontent;
-    bool mkdir1;
+    bool mkdir;
     char *filename;
     size_t contentsize;
     FILE *fd;
     char *buffer;
     vfilename = PG_GETARG_TEXT_P(0);
     vcontent = PG_GETARG_BYTEA_P(1);
-    mkdir1 = PG_GETARG_BOOL(2);
+    mkdir = PG_GETARG_BOOL(2);
     filename = text_to_cstring(vfilename);
     contentsize = VARSIZE(vcontent) - VARHDRSZ;
-    if (mkdir1) {
+    if (mkdir) {
         char* filename2 = strdup(filename);
         mkdir_recursive(dirname(filename2), 0777);
     }
