@@ -37,6 +37,7 @@ Datum fio_writefile(PG_FUNCTION_ARGS) {
     size_t contentsize;
     FILE *fd;
     char *buffer;
+    size_t writesize;
     vfilename = PG_GETARG_TEXT_P(0);
     vcontent = PG_GETARG_BYTEA_P(1);
     mkdir = PG_GETARG_BOOL(2);
@@ -51,7 +52,7 @@ Datum fio_writefile(PG_FUNCTION_ARGS) {
         return 0;
     }
     buffer = text_to_cstring(vcontent);
-    fwrite(buffer, 1, contentsize, fd);
+    writesize = fwrite(buffer, 1, contentsize, fd);
     fclose(fd);
-    return contentsize;
+    return writesize;
 }
