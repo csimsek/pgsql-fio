@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION fio_writefile(pathname varchar, content bytea, mkdir 
 CREATE OR REPLACE FUNCTION fio_readfile(pathname varchar)
     RETURNS bytea
     AS 'MODULE_PATHNAME', 'fio_readfile'
-  	LANGUAGE 'c';
+    LANGUAGE 'c';
 CREATE TYPE readdirresult AS (
     dirname varchar
 );
