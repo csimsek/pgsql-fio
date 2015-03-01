@@ -32,21 +32,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Datum fio_writefile(PG_FUNCTION_ARGS) {
     text *vfilename;
     bytea *vcontent;
-    bool mkdir;
     char *filename;
     size_t contentsize;
     FILE *fd;
     char *buffer;
     size_t writesize;
+
+    if (PG_ARGISNULL(0)) {
+        elog(ERROR, "filename must be specified");
+        return 0;
+    }
     vfilename = PG_GETARG_TEXT_P(0);
+    
+    if (PG_ARGISNULL(1)) {
+        elog(ERROR, "content must be specified");
+        return 0;
+    }
     vcontent = PG_GETARG_BYTEA_P(1);
-    mkdir = PG_GETARG_BOOL(2);
+    
     filename = text_to_cstring(vfilename);
     contentsize = VARSIZE(vcontent) - VARHDRSZ;
-    if (mkdir) {
-        char* filename2 = strdup(filename);
-        mkdir_recursive(dirname(filename2), 0777);
+    
+    if (!PG_ARGISNULL(2)) {
+        if (PG_GETARG_BOOL(2)) { // if it is recursive
+            char* filename2 = strdup(filename);
+            mkdir_recursive(dirname(filename2), 0777);
+        }
     }
+
     if ((fd = fopen(filename, "w+")) == NULL) {
         elog(ERROR, "cannot open file: %s", filename);
         return 0;

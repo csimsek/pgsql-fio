@@ -41,6 +41,10 @@ Datum fio_readfile(PG_FUNCTION_ARGS) {
     bytea *result;
     long filesize;
     int bufferedbytecount;
+    if (PG_ARGISNULL(0)) {
+        elog(ERROR, "filename must be specified");
+        return 0;
+    }
     v_filename = PG_GETARG_TEXT_P(0);
     filename = text_to_cstring(v_filename);
     if ((fd = fopen(filename, "r+")) == NULL) {

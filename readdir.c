@@ -44,6 +44,10 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
         elog(ERROR, "path must be specified");
         return 0;
     }
+    if (PG_ARGISNULL(1)) {
+        elog(ERROR, "pattern must be specified");
+        return 0;
+    }
     pathname = text_to_cstring(PG_GETARG_TEXT_P(0));
     pattern = text_to_cstring(PG_GETARG_TEXT_P(1));
     if (SRF_IS_FIRSTCALL()) {
