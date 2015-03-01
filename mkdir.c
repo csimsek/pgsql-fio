@@ -29,29 +29,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "fio.h"
 
-int mkdir_recursive(const char *dir, mode_t mode) {
-    int result;
-    char tmp[256];
-    char *p = NULL;
-    size_t len;
-    snprintf(tmp, sizeof(tmp),"%s",dir);
-    len = strlen(tmp);
-    if(tmp[len - 1] == '/') {
-        tmp[len - 1] = 0;
-    }
-    for(p = tmp + 1; *p; p++) {
-        if(*p == '/') {
-            *p = 0;
-            mkdir(tmp, mode);
-            chmod(tmp, mode);
-            *p = '/';
-        }
-    }
-    result = mkdir(tmp, mode);
-    chmod(tmp, mode);
-    return result;
-}
-
 Datum fio_mkdir(PG_FUNCTION_ARGS) {
     text *v_pathname;
     char *pathname;
