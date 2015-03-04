@@ -32,6 +32,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define BUFFER_SIZE 1024
 
 Datum fio_readfile(PG_FUNCTION_ARGS) {
+    // readfile(filename varchar);
+    
     text *v_filename;
     char *filename;
     char *content;

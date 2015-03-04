@@ -30,6 +30,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "fio.h"
 
 Datum fio_mkdir(PG_FUNCTION_ARGS) {
+    // mkdir(pathname varchar, mode varchar, recursive boolean default false);
+    
     text *v_pathname;
     char *pathname;
     text *vmode;
