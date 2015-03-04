@@ -34,6 +34,8 @@ struct dircontext {
 }; 
 
 Datum fio_readdir(PG_FUNCTION_ARGS) {
+    // readdir(pathname varchar, pattern varchar default '*');
+    
     FuncCallContext *funcctx;
     DIR *dir = NULL;
     char *pathname;

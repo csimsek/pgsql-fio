@@ -30,6 +30,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "fio.h"
 
 Datum fio_writefile(PG_FUNCTION_ARGS) {
+    // writefile(filename varchar, content bytea, mkdir boolean default false);
+    
     text *vfilename;
     bytea *vcontent;
     char *filename;

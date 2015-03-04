@@ -30,6 +30,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "fio.h"
 
 Datum fio_chmod(PG_FUNCTION_ARGS) {
+    // chmod(pathname varchar, mode varchar);
+    
     text *v_pathname;
     char *pathname;
     text *vmode;
