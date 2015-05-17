@@ -30,5 +30,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef __UTILS_H
 #define __UTILS_H
 int mkdir_recursive(const char *dir, mode_t mode);
-long getfilesize(FILE *fd);
+long get_file_size(FILE *fd);
 #endif

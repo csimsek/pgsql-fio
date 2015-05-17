@@ -53,7 +53,7 @@ Datum fio_readfile(PG_FUNCTION_ARGS) {
         elog(ERROR, "cannot open file: %s", filename);
         return 0;
     }
-    filesize = getfilesize(fd);
+    filesize = get_file_size(fd);
     content = (char *) palloc(filesize);
     do {
         bufferedbytecount = fread(buffer, 1, BUFFER_SIZE, fd);
