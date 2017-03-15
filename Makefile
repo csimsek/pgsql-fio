@@ -1,4 +1,3 @@
-
 MODULE_big = fio
 OBJS = fio.o writefile.o readfile.o readdir.o mkdir.o chmod.o utils.o
 EXTENSION = fio
