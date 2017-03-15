@@ -43,16 +43,24 @@ Datum fio_readfile(PG_FUNCTION_ARGS) {
     bytea *result;
     long filesize;
     int bufferedbytecount;
+    DIR* dir = NULL;
     if (PG_ARGISNULL(0)) {
         elog(ERROR, "filename must be specified");
         return 0;
     }
     v_filename = PG_GETARG_TEXT_P(0);
     filename = text_to_cstring(v_filename);
-    if ((fd = fopen(filename, "r")) == NULL) {
-        elog(ERROR, "cannot open file: %s, (%s)", filename, strerror(errno));
+    dir = opendir(filename);
+    if (dir != NULL) {
+        closedir(dir);
+        elog(ERROR, "cannot oopen file: %s (not regular file)", filename);
         return 0;
     }
+    if ((fd = fopen(filename, "r")) == NULL) {
+        elog(ERROR, "cannot open file: %s (%s)", filename, strerror(errno));
+        return 0;
+    }
+
     filesize = get_file_size(fd);
     content = (char *) palloc(filesize);
     do {
