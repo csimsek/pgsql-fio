@@ -60,6 +60,7 @@ Datum fio_writefile(PG_FUNCTION_ARGS) {
             char* filename2 = strdup(filename);
             mkdir_recursive(dirname(filename2), 0777);
             //TODO: Why is this 0777?
+            free(filename2);
         }
     }
 
