@@ -55,7 +55,6 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
     if (SRF_IS_FIRSTCALL()) {
         MemoryContext oldcontext;
         TupleDesc tupdesc;
-        dirctx = (struct dircontext *) palloc(sizeof(struct dircontext *));
         funcctx = SRF_FIRSTCALL_INIT();
         oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
         if (get_call_result_type(fcinfo, NULL, &tupdesc) != TYPEFUNC_COMPOSITE)
@@ -69,6 +68,7 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
             elog(ERROR, "cannot open dir: %s (%s)", pathname, strerror(errno));
             return 0;
         }
+        dirctx = (struct dircontext *) palloc(sizeof(struct dircontext *));
         dirctx->dir = dir;
         funcctx->user_fctx = (void *) dirctx;
         MemoryContextSwitchTo(oldcontext);

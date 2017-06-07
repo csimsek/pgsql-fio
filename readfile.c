@@ -53,7 +53,7 @@ Datum fio_readfile(PG_FUNCTION_ARGS) {
     dir = opendir(filename);
     if (dir != NULL) {
         closedir(dir);
-        elog(ERROR, "cannot oopen file: %s (not regular file)", filename);
+        elog(ERROR, "cannot open file: %s (not regular file)", filename);
         return 0;
     }
     if ((fd = fopen(filename, "r")) == NULL) {
