@@ -59,3 +59,11 @@ Datum fio_readdir(PG_FUNCTION_ARGS);
 Datum fio_mkdir(PG_FUNCTION_ARGS);
 Datum fio_chmod(PG_FUNCTION_ARGS);
 #endif
+
+#ifndef FALSE
+#define FALSE   (0)
+#endif
+
+#ifndef TRUE
+#define TRUE    (!FALSE)
+#endif
