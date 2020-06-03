@@ -65,7 +65,8 @@ Datum fio_writefile(PG_FUNCTION_ARGS) {
     }
 
     if ((fd = fopen(filename, "w+")) == NULL) {
-        elog(ERROR, "cannot open file: %s (%s)", filename, strerror(errno));
+        int err = errno;
+        elog(ERROR, "cannot open file: %s (%s)", filename, strerror(err));
         return 0;
     }
     buffer = text_to_cstring(vcontent);

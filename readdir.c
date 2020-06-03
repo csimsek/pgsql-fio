@@ -65,7 +65,8 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
         funcctx->attinmeta = TupleDescGetAttInMetadata(tupdesc);
         dir = opendir(pathname);
         if (dir == NULL) {
-            elog(ERROR, "cannot open dir: %s (%s)", pathname, strerror(errno));
+            int err = errno;
+            elog(ERROR, "cannot open dir: %s (%s)", pathname, strerror(err));
             return 0;
         }
         dirctx = (struct dircontext *) palloc(sizeof(struct dircontext *));

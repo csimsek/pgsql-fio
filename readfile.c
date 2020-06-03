@@ -57,7 +57,8 @@ Datum fio_readfile(PG_FUNCTION_ARGS) {
         return 0;
     }
     if ((fd = fopen(filename, "r")) == NULL) {
-        elog(ERROR, "cannot open file: %s (%s)", filename, strerror(errno));
+        int err = errno;
+        elog(ERROR, "cannot open file: %s (%s)", filename, strerror(err));
         return 0;
     }
 
