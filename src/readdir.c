@@ -77,7 +77,7 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
     funcctx = SRF_PERCALL_SETUP();
     dirctx = (struct dircontext *) funcctx->user_fctx;
     dir = dirctx->dir;
-    while ((dp = readdir(dir)) != NULL) {
+    if ((dp = readdir(dir)) != NULL) {
         if (fnmatch(pattern, dp->d_name, FNM_NOESCAPE) == 0) {
             HeapTuple tuple;
             Datum result;
@@ -88,9 +88,9 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
             pfree(value);
             SRF_RETURN_NEXT(funcctx, result);
         }
+    } else {
+        closedir(dir);
+        pfree(dirctx);
+        SRF_RETURN_DONE(funcctx);
     }
-    dir = dirctx->dir;
-    closedir(dir);
-    pfree(dirctx);
-    SRF_RETURN_DONE(funcctx);
 }
