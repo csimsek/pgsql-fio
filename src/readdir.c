@@ -93,4 +93,5 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
         pfree(dirctx);
         SRF_RETURN_DONE(funcctx);
     }
+    return 0;
 }
