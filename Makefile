@@ -1,5 +1,13 @@
 MODULE_big = fio
-OBJS = src/fio.o src/writefile.o src/readfile.o src/readdir.o src/mkdir.o src/chmod.o src/utils.o
+
+OBJS = src/fio.o       \
+       src/writefile.o \
+       src/readfile.o  \
+       src/readdir.o   \
+       src/mkdir.o     \
+       src/chmod.o     \
+       src/utils.o
+
 EXTENSION = fio
 DATA = fio--1.0.sql
 REGRESS = fio
