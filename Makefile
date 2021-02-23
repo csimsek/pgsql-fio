@@ -1,6 +1,8 @@
 MODULE_big = fio
 
 OBJS = src/fio.o       \
+       src/renamefile.o \
+       src/removefile.o \
        src/writefile.o \
        src/readfile.o  \
        src/readdir.o   \

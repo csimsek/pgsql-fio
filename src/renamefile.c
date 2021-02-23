@@ -29,23 +29,39 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "fio.h"
 
-PG_MODULE_MAGIC;
+Datum fio_renamefile(PG_FUNCTION_ARGS) {
+    text *vfilename;
+    text *vfilename_new;
+    char *filename;
+    char *filename_new;
 
-void _PG_init(void);
-void _PG_fini(void);
+    if (PG_ARGISNULL(0)) {
+        elog(ERROR, "filename must be specified");
+        return 0;
+    }
+    vfilename = PG_GETARG_TEXT_P(0);
 
-void _PG_init(void)
-{
+    if (PG_ARGISNULL(1)) {
+        elog(ERROR, "new filename must be specified");
+        return 0;
+    }
+    vfilename_new = PG_GETARG_TEXT_P(1);
+
+    filename = text_to_cstring(vfilename);
+    filename_new = text_to_cstring(vfilename_new);
+
+    if (access(filename_new, F_OK) != 0) {
+        if (rename(filename, filename_new) != 0) {
+            int err = errno;
+            elog(ERROR, "cannot rename file: %s (%s)", filename, strerror(err));
+            return 0;
+        }
+    } else {
+        int err = errno;
+        elog(ERROR, "new file %s already exists (%s) ", filename, strerror(err));
+        return 0;
+    }
+    pfree(filename);
+    pfree(filename_new);
+    PG_RETURN_NULL();
 }
-
-void _PG_fini(void)
-{
-}
-
-PG_FUNCTION_INFO_V1(fio_removefile);
-PG_FUNCTION_INFO_V1(fio_renamefile);
-PG_FUNCTION_INFO_V1(fio_writefile);
-PG_FUNCTION_INFO_V1(fio_readfile);
-PG_FUNCTION_INFO_V1(fio_readdir);
-PG_FUNCTION_INFO_V1(fio_mkdir);
-PG_FUNCTION_INFO_V1(fio_chmod);
