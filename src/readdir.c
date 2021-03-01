@@ -44,11 +44,9 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
     struct dircontext *dirctx;
     if (PG_ARGISNULL(0)) {
         elog(ERROR, "path must be specified");
-        return 0;
     }
     if (PG_ARGISNULL(1)) {
         elog(ERROR, "pattern must be specified");
-        return 0;
     }
     pathname = text_to_cstring(PG_GETARG_TEXT_P(0));
     pattern = text_to_cstring(PG_GETARG_TEXT_P(1));
@@ -67,7 +65,6 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
         if (dir == NULL) {
             int err = errno;
             elog(ERROR, "cannot open dir: %s (%s)", pathname, strerror(err));
-            return 0;
         }
         dirctx = (struct dircontext *) palloc(sizeof(struct dircontext *));
         dirctx->dir = dir;
@@ -77,7 +74,7 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
     funcctx = SRF_PERCALL_SETUP();
     dirctx = (struct dircontext *) funcctx->user_fctx;
     dir = dirctx->dir;
-    if ((dp = readdir(dir)) != NULL) {
+    while ((dp = readdir(dir)) != NULL) {
         if (fnmatch(pattern, dp->d_name, FNM_NOESCAPE) == 0) {
             HeapTuple tuple;
             Datum result;
@@ -88,10 +85,8 @@ Datum fio_readdir(PG_FUNCTION_ARGS) {
             pfree(value);
             SRF_RETURN_NEXT(funcctx, result);
         }
-    } else {
-        closedir(dir);
-        pfree(dirctx);
-        SRF_RETURN_DONE(funcctx);
     }
-    return 0;
+    closedir(dir);
+    pfree(dirctx);
+    SRF_RETURN_DONE(funcctx);
 }
