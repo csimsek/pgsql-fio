@@ -61,10 +61,17 @@ For example:
 ##### `fio_readfile(filename varchar)`
 - **filename**: The file's name you want to read. Return type is `bytea`.
 
-##### `fio_writefile(filename varchar, content bytea, mkdir boolean default false)`
+##### `fio_writefile(filename varchar, content bytea, mkdir boolean default false, overwrite boolean DEFAULT false)`
 - **filename**: The file's name you want to create/write.
 - **content**: What content you want to write the file.
 - **mkdir**: If `true`, it creates directory with given `filename`. Creates directory with recursion option.
+- **overwrite**: If `true` overwrite file if already exists. If `false` and file exists it fails.
 
 
+##### `fio_removefile(filename varchar)`
+- **filename**: The file's name you want to remove.
+
+##### `fio_renamefile(filename varchar, newfilename varchar)`
+- **filename**: The file's name you want to rename.
+- **newfilename**: The new file's name
 

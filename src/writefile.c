@@ -39,22 +39,23 @@ Datum fio_writefile(PG_FUNCTION_ARGS) {
     FILE *fd;
     char *buffer;
     size_t writesize;
+    char *open_flag;
 
     if (PG_ARGISNULL(0)) {
         elog(ERROR, "filename must be specified");
         return 0;
     }
     vfilename = PG_GETARG_TEXT_P(0);
-    
+
     if (PG_ARGISNULL(1)) {
         elog(ERROR, "content must be specified");
         return 0;
     }
     vcontent = PG_GETARG_BYTEA_P(1);
-    
+
     filename = text_to_cstring(vfilename);
     contentsize = VARSIZE(vcontent) - VARHDRSZ;
-    
+
     if (!PG_ARGISNULL(2)) {
         if (PG_GETARG_BOOL(2)) { // if it is recursive
             char* filename2 = strdup(filename);
@@ -64,7 +65,15 @@ Datum fio_writefile(PG_FUNCTION_ARGS) {
         }
     }
 
-    if ((fd = fopen(filename, "w+")) == NULL) {
+    open_flag = (char *) palloc(sizeof(char) * 3);
+    strncpy(open_flag, "wx\0", 3);
+    if (!PG_ARGISNULL(3)) {
+        if (PG_GETARG_BOOL(3)) {
+            strncpy(open_flag, "w\0", 2);
+        }
+    }
+
+    if ((fd = fopen(filename, open_flag)) == NULL) {
         int err = errno;
         elog(ERROR, "cannot open file: %s (%s)", filename, strerror(err));
         return 0;
@@ -72,5 +81,7 @@ Datum fio_writefile(PG_FUNCTION_ARGS) {
     buffer = text_to_cstring(vcontent);
     writesize = fwrite(buffer, 1, contentsize, fd);
     fclose(fd);
+    pfree(open_flag);
+    pfree(filename);
     return writesize;
 }

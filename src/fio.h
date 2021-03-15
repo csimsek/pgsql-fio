@@ -37,6 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/types.h>
 #include <dirent.h>
 #include <fnmatch.h>
+#include <unistd.h>
 
 #include <postgres.h>
 #include <fmgr.h>
@@ -58,6 +59,8 @@ Datum fio_readfile(PG_FUNCTION_ARGS);
 Datum fio_readdir(PG_FUNCTION_ARGS);
 Datum fio_mkdir(PG_FUNCTION_ARGS);
 Datum fio_chmod(PG_FUNCTION_ARGS);
+Datum fio_removefile(PG_FUNCTION_ARGS);
+Datum fio_renamefile(PG_FUNCTION_ARGS);
 #endif
 
 #ifndef FALSE
