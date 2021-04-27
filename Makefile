@@ -12,7 +12,6 @@ OBJS = src/fio.o       \
 
 EXTENSION = fio
 DATA = fio--1.0.sql
-REGRESS = fio
 EXTRA-CLEAN =
 
 #PG_CONFIG = /usr/pgsql-9.3/bin/pg_config
