@@ -29,23 +29,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "fio.h"
 
-PG_MODULE_MAGIC;
+Datum fio_removefile(PG_FUNCTION_ARGS) {
+    text *vfilename;
+    char *filename;
 
-void _PG_init(void);
-void _PG_fini(void);
+    if (PG_ARGISNULL(0)) {
+        elog(ERROR, "filename must be specified");
+        return 0;
+    }
+    vfilename = PG_GETARG_TEXT_P(0);
 
-void _PG_init(void)
-{
+    filename = text_to_cstring(vfilename);
+
+    if (remove(filename) != 0) {
+        int err = errno;
+        elog(ERROR, "cannot remove file: %s (%s)", filename, strerror(err));
+        return 0;
+    }
+    pfree(filename);
+    PG_RETURN_NULL();
 }
-
-void _PG_fini(void)
-{
-}
-
-PG_FUNCTION_INFO_V1(fio_removefile);
-PG_FUNCTION_INFO_V1(fio_renamefile);
-PG_FUNCTION_INFO_V1(fio_writefile);
-PG_FUNCTION_INFO_V1(fio_readfile);
-PG_FUNCTION_INFO_V1(fio_readdir);
-PG_FUNCTION_INFO_V1(fio_mkdir);
-PG_FUNCTION_INFO_V1(fio_chmod);
