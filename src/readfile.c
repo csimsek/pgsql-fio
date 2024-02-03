@@ -29,23 +29,50 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "fio.h"
 
-PG_MODULE_MAGIC;
+#define BUFFER_SIZE 1024
 
-void _PG_init(void);
-void _PG_fini(void);
+Datum fio_readfile(PG_FUNCTION_ARGS) {
+    // readfile(filename varchar);
 
-void _PG_init(void)
-{
+    text *v_filename;
+    char *filename;
+    char *content;
+    int totalcount = 0;
+    char buffer[BUFFER_SIZE];
+    FILE *fd;
+    bytea *result;
+    long filesize;
+    int bufferedbytecount;
+    DIR* dir = NULL;
+    if (PG_ARGISNULL(0)) {
+        elog(ERROR, "filename must be specified");
+        return 0;
+    }
+    v_filename = PG_GETARG_TEXT_P(0);
+    filename = text_to_cstring(v_filename);
+    dir = opendir(filename);
+    if (dir != NULL) {
+        closedir(dir);
+        elog(ERROR, "cannot open file: %s (not regular file)", filename);
+        return 0;
+    }
+    if ((fd = fopen(filename, "r")) == NULL) {
+        int err = errno;
+        elog(ERROR, "cannot open file: %s (%s)", filename, strerror(err));
+        return 0;
+    }
+
+    filesize = get_file_size(fd);
+    content = (char *) palloc(filesize);
+    do {
+        bufferedbytecount = fread(buffer, 1, BUFFER_SIZE, fd);
+        memcpy(content + totalcount, buffer, bufferedbytecount);
+        totalcount += bufferedbytecount;
+    } while (bufferedbytecount == BUFFER_SIZE);
+    fclose(fd);
+    result = (bytea *) palloc(VARHDRSZ + filesize);
+    memcpy(VARDATA(result), content, filesize);
+    pfree(content);
+    SET_VARSIZE(result, filesize + VARHDRSZ);
+    PG_RETURN_BYTEA_P(result);
 }
-
-void _PG_fini(void)
-{
-}
-
-PG_FUNCTION_INFO_V1(fio_removefile);
-PG_FUNCTION_INFO_V1(fio_renamefile);
-PG_FUNCTION_INFO_V1(fio_writefile);
-PG_FUNCTION_INFO_V1(fio_readfile);
-PG_FUNCTION_INFO_V1(fio_readdir);
-PG_FUNCTION_INFO_V1(fio_mkdir);
-PG_FUNCTION_INFO_V1(fio_chmod);

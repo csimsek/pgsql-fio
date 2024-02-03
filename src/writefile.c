@@ -29,23 +29,59 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "fio.h"
 
-PG_MODULE_MAGIC;
+Datum fio_writefile(PG_FUNCTION_ARGS) {
+    // writefile(filename varchar, content bytea, mkdir boolean default false);
 
-void _PG_init(void);
-void _PG_fini(void);
+    text *vfilename;
+    bytea *vcontent;
+    char *filename;
+    size_t contentsize;
+    FILE *fd;
+    char *buffer;
+    size_t writesize;
+    char *open_flag;
 
-void _PG_init(void)
-{
+    if (PG_ARGISNULL(0)) {
+        elog(ERROR, "filename must be specified");
+        return 0;
+    }
+    vfilename = PG_GETARG_TEXT_P(0);
+
+    if (PG_ARGISNULL(1)) {
+        elog(ERROR, "content must be specified");
+        return 0;
+    }
+    vcontent = PG_GETARG_BYTEA_P(1);
+
+    filename = text_to_cstring(vfilename);
+    contentsize = VARSIZE(vcontent) - VARHDRSZ;
+
+    if (!PG_ARGISNULL(2)) {
+        if (PG_GETARG_BOOL(2)) { // if it is recursive
+            char* filename2 = strdup(filename);
+            mkdir_recursive(dirname(filename2), 0777);
+            //TODO: Why is this 0777?
+            free(filename2);
+        }
+    }
+
+    open_flag = (char *) palloc(sizeof(char) * 3);
+    strncpy(open_flag, "wx\0", 3);
+    if (!PG_ARGISNULL(3)) {
+        if (PG_GETARG_BOOL(3)) {
+            strncpy(open_flag, "w\0", 2);
+        }
+    }
+
+    if ((fd = fopen(filename, open_flag)) == NULL) {
+        int err = errno;
+        elog(ERROR, "cannot open file: %s (%s)", filename, strerror(err));
+        return 0;
+    }
+    buffer = text_to_cstring(vcontent);
+    writesize = fwrite(buffer, 1, contentsize, fd);
+    fclose(fd);
+    pfree(open_flag);
+    pfree(filename);
+    return writesize;
 }
-
-void _PG_fini(void)
-{
-}
-
-PG_FUNCTION_INFO_V1(fio_removefile);
-PG_FUNCTION_INFO_V1(fio_renamefile);
-PG_FUNCTION_INFO_V1(fio_writefile);
-PG_FUNCTION_INFO_V1(fio_readfile);
-PG_FUNCTION_INFO_V1(fio_readdir);
-PG_FUNCTION_INFO_V1(fio_mkdir);
-PG_FUNCTION_INFO_V1(fio_chmod);
